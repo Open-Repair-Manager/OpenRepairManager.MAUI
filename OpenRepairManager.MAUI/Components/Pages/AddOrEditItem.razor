@@ -1,0 +1,141 @@
+@page "/Item/{IDslug}"
+@using System.Diagnostics
+@using System.Globalization
+@using OpenRepairManager.MAUI.Services
+<h3>AddOrEditItem</h3>
+
+<label>Item Name</label>
+<input type="text" @bind="item.ItemName"/>
+<input @bind="item.ID" type="hidden"/>
+<label>Product Category</label>
+<select @bind="item.PartnerProductCategory">
+    <option value="Electrical & Devices">Electrical &amp; Devices</option>
+    <option value="General">General</option>
+    <option value="Textiles">Textiles</option>
+</select>
+
+<label>Electrical Category</label>
+<select @bind="item.ProductCategoryID">
+    <option value="1">Aircon/dehumidifier</option>
+    <option value="2">Battery/charger/adapter</option>
+    <option value="3">Decorative or safety lights</option>
+    <option value="4">Desktop computer</option>
+    <option value="5">Digital compact camera</option>
+    <option value="6">DSLR/video camera</option>
+    <option value="7">Fan</option>
+    <option value="8">Flat screen</option>
+    <option value="9">Hair & beauty item</option>
+    <option value="10">Handheld entertainment device</option>
+    <option value="11">Headphones</option>
+    <option value="12">Hi-Fi integrated</option>
+    <option value="13">Hi-Fi separates</option>
+    <option value="14">Kettle</option>
+    <option value="15">Lamp</option>
+    <option value="16">Laptop</option>
+    <option value="17">Large home electrical</option>
+    <option value="18">Misc</option>
+    <option value="19">Mobile</option>
+    <option value="20">Musical instrument</option>
+    <option value="21">Paper shredder</option>
+    <option value="22">PC accessory</option>
+    <option value="23">Portable radio</option>
+    <option value="24">Power tool</option>
+    <option value="25">Printer/scanner</option>
+    <option value="26">Projector</option>
+    <option value="27">Sewing machine</option>
+    <option value="28">Small home electrical</option>
+    <option value="29">Small kitchen item</option>
+    <option value="30">Tablet</option>
+    <option value="31">Toaster</option>
+    <option value="32">Toy</option>
+    <option value="33">TV and gaming-related accessories</option>
+    <option value="34">Vacuum</option>
+    <option value="35">Watch/clock</option>
+    <option value="36">Coffee maker</option>
+    <option value="37">Food processor</option>
+    <option value="38">Games console</option>
+    <option value="39">Hair dryer</option>
+    <option value="40">Iron</option>
+
+</select>
+
+<label>Brand</label>
+<input type="text" @bind="item.Brand"/>
+
+<label>Year of Manufacture</label>
+<input @Bind="item.ProductYear" type="number"/>
+
+<label>Item Issue</label>
+<input type="text" @bind="item.Problem"/>
+
+<label style="@vis">Status</label>
+<select @bind="item.RepairStatus">
+    <option value="1">Fixed</option>
+    <option value="2">Repairable</option>
+    <option value="3">End of Life</option>
+</select>
+
+<label>Repair Barrier</label>
+<select @bind="item.RepairBarrier">
+    <option hidden="hidden" value="0">N/A</option>
+    <option value="1">Spare Parts Not Available</option>
+    <option value="2">Spare Parts Too Expensive</option>
+    <option value="3">No Way To Open Product</option>
+    <option value="4">Repair Information Not Available</option>
+    <option value="6">Item Too Worn Out</option>
+    <option value="5">Lack of Equipment</option>
+</select>
+
+<label>Customer Name</label>
+<input type="text" @bind="item.CustomerName"/>
+
+<label>Notes</label>
+<input type="text" @bind="item.ItemNotes"/>
+
+<input type="submit" onclick="@SaveItemAsync" value="Save" />
+
+<input type="button" @onclick="@Test" value="test"/>
+
+@code {
+
+    bool isEditVisible = false;
+
+    string vis = "display: none";
+    
+    [Parameter] 
+    public string IDslug { get; set; }
+    
+    private RepairItem item = new();
+    
+    private int ID { get; set; }
+
+    private void Test()
+    {
+        vis = "";
+    }
+    
+    private async Task SaveItemAsync()
+    {
+        var result = await ApiService.NewItemAsync(item);
+
+        if (result)
+        {
+            NavManager.NavigateTo("/RepairItems");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (int.TryParse(IDslug, out int Id))
+        {
+            if (Id != 0)
+            {
+                item = await ApiService.GetRepairItemAsync(Id);
+            }
+        }
+
+        item.SessionID = Preferences.Default.Get("SessionID", 0);
+
+    }
+
+}

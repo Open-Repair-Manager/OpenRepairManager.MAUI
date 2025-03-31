@@ -1,0 +1,40 @@
+@page "/FirstRun"
+@using System.Diagnostics
+@using Microsoft.Maui.Storage
+@using OpenRepairManager.MAUI.Components.Layout
+@using OpenRepairManager.MAUI.Services
+@layout SetupLayout
+@inject NavigationManager NavManager
+<h3>FirstRun</h3>
+
+<label>API URL</label>
+<input @bind="apiUrl" id="ApiUrl" type="text" />
+<label>API Key</label>
+<input @bind="@apiKey" id="ApiToken" type="text" />
+<button @onclick="Submit" type="submit" class="btn btn-primary">Submit</button>
+
+@code {
+    string apiKey;
+    string apiUrl;
+
+    protected override async Task OnInitializedAsync()
+    {
+        apiKey = Preferences.Default.Get("ApiKey", "");
+        apiUrl = Preferences.Default.Get("ApiUrl", "");
+    }
+
+    private async Task Submit()
+    {
+        bool result = await ApiService.AreSettingsValidAsync(apiKey, apiUrl);
+
+        if (result)
+        {
+            Preferences.Default.Set("ApiKey", apiKey);
+            Preferences.Default.Set("ApiUrl", apiUrl);
+
+            NavManager.NavigateTo("/");
+        }
+        
+        Debug.WriteLine(result);
+    }
+}

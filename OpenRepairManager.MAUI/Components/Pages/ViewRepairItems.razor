@@ -1,0 +1,42 @@
+@page "/RepairItems"
+@using System.Diagnostics
+@using OpenRepairManager.MAUI.Services
+<h3>ViewRepairItems</h3>
+
+<table>
+    <thead>
+    <tr>
+        <th>Repair Item</th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach (var repairItem in _repairItems)
+        {
+            <tr>
+                <td>@repairItem.ItemName</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<RepairItem> _repairItems = new();
+    
+    public string categorySlug { get; set; }
+    
+    public string sessionSlug { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        categorySlug = Preferences.Default.Get("Category", "");
+        sessionSlug = Preferences.Default.Get("SessionSlug", "");
+        
+        if (string.IsNullOrEmpty(categorySlug))
+            NavManager.NavigateTo("/");
+        
+        var repairItems = await ApiService.GetStatsAsync(sessionSlug, categorySlug);
+        
+        _repairItems = repairItems.ToList();
+    }
+
+}
