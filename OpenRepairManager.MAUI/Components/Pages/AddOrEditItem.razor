@@ -6,13 +6,13 @@
 @inject IJSRuntime JS
 <h3>AddOrEditItem</h3>
 <div class="form-group">
-    <div class="mb-3">
+    <div class="mb-3 input-group has-validation">
         <label class="form-label" for="itemName">Item Name</label>
-        <input class="form-control" id="itemName" type="text" @bind="item.ItemName"/>
+        <input required class="form-control" id="itemName" type="text" @bind="item.ItemName"/>
     </div>
     <div class="mb-3">
         <label for="custName" class="form-label">Customer Name</label>
-        <input id="custName" type="text" class="form-control" @bind="item.CustomerName"/>
+        <input required id="custName" type="text" class="form-control" @bind="item.CustomerName"/>
     </div>
     <div class="row">
         <div class="col-md-6">
@@ -54,17 +54,17 @@
    
     <div class="mb-3">
         <label class="form-label" for="iBrand">Brand</label>
-        <input class="form-control" id="iBrand" type="text" @bind="item.Brand"/>
+        <input required class="form-control" id="iBrand" type="text" @bind="item.Brand"/>
     </div>
     
     <div class="mb-3">
         <label for="itemYear" class="form-label">Year of Manufacture</label>
-        <input id="itemYear" class="form-control" @bind="item.ProductYear" type="number" min="1800" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"/>
+        <input required id="itemYear" class="form-control" @bind="item.ProductYear" type="number" min="1800" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"/>
     </div>
     
     <div class="mb-3">
         <label for="itemIssue" class="form-label">Item Issue</label>
-        <input id="itemIssue" class="form-control" type="text" @bind="item.Problem"/>
+        <input required id="itemIssue" class="form-control" type="text" @bind="item.Problem"/>
     </div>
 
     <div class="mb-3">

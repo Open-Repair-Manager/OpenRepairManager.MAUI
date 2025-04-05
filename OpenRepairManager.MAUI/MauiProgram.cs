@@ -17,7 +17,7 @@ public static class MauiProgram
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
 #endif
-
+        Preferences.Default.Remove("SessionSlug");
         return builder.Build();
     }
 }

@@ -29,6 +29,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _repairItems.Add(new()
+        {
+            ID = 0,
+            ItemName = "Loading"
+        });
         categorySlug = Preferences.Default.Get("Category", "");
         sessionSlug = Preferences.Default.Get("SessionSlug", "");
         

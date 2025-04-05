@@ -1,81 +1,14 @@
 ﻿@page "/"
-@layout SetupLayout;
 @using OpenRepairManager.MAUI.Services
 @using System.Diagnostics
 @using OpenRepairManager.MAUI.Components.Layout
 
-<h1>Select Session</h1>
-
-<label>Session</label>
-<select @bind="@selectedSessionSlug">
-    @foreach (var session in _sessions)
-    {
-        <option value="@session.SessionSlug">@session.SessionName</option>
-    }
-</select>
-<br/>
-<label>Category</label>
-<select @bind="category">
-    <option value="Reception">Reception</option>
-    <option value="Electrical & Devices">Electrical &amp; Devices</option>
-    <option value="General">General</option>
-</select>
-<button @onclick="SaveSessionsAsync">Save</button>
 
 @code
 {
-    private async Task SaveSessionsAsync()
+    protected override void OnInitialized()
     {
-        //Debug.WriteLine($"{selectedSessionID} {selectedSessionSlug}, {category}");
-        selectedSessionID = _sessions.First(s => s.SessionSlug.ToUpper() == selectedSessionSlug.ToUpper()).SessionID;
-        Preferences.Default.Set("SessionID", selectedSessionID);
-        Preferences.Default.Set("Category", category);
-        Preferences.Default.Set("SessionSlug", selectedSessionSlug);
-        Debug.WriteLine($"{selectedSessionSlug}, {selectedSessionID}, {category}");
-        NavManager.NavigateTo($"/RepairItems");
-    }
-    List<Session> _sessions = new();
-    private string selectedSessionSlug { get; set; }
-    private string category { get; set; }
-    private int selectedSessionID { get; set; }
-    protected override async Task OnInitializedAsync()
-    {
-        string apiURL = Preferences.Default.Get("ApiUrl", "");
-        string apiKey = Preferences.Default.Get("ApiKey", "");
-        IList<Session> sessions;
-
-        Debug.WriteLine(string.IsNullOrEmpty(apiURL));
-        if (string.IsNullOrEmpty(apiURL))
-        {
-            NavManager.NavigateTo("/FirstRun");
-        }
-        else if (string.IsNullOrEmpty(apiKey))
-        {
-            NavManager.NavigateTo("/FirstRun");
-        }
-        else
-        {
-            bool isValid = await ApiService.AreSettingsValidAsync(apiKey, apiURL);
-            if (!isValid)
-            {
-                NavManager.NavigateTo("/FirstRun");
-            }
-            else
-            {
-                sessions = await ApiService.GetSessionsAsync(0, "desc");
-        
-                @foreach (var session in sessions)
-                {
-                    _sessions.Add(session);
-                }
-
-                selectedSessionSlug = _sessions[0].SessionSlug;
-                category = "Reception";
-            }
-        }
-        
-
-        
-
+        if (Preferences.Default.Get("SessionSlug", "") == "") 
+            NavManager.NavigateTo("/SessionSelect");
     }
 }
