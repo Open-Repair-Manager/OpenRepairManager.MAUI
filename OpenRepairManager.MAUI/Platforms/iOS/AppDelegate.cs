@@ -1,4 +1,6 @@
 ﻿using Foundation;
+using ObjCRuntime;
+using UIKit;
 
 namespace OpenRepairManager.MAUI;
 
@@ -6,4 +8,5 @@ namespace OpenRepairManager.MAUI;
 public class AppDelegate : MauiUIApplicationDelegate
 {
     protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+    
 }

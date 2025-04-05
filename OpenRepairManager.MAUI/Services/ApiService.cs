@@ -4,14 +4,23 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Maui.Networking;
 using OpenRepairManager.Common.Models;
+using OpenRepairManager.Common.Models.ApiModels;
 
 namespace OpenRepairManager.MAUI.Services;
 
 public static class ApiService
 {
+   private static JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = true
+    };
+    
     private static HttpClient _client = new HttpClient()
     {
         BaseAddress = new Uri(Preferences.Default.Get("ApiUrl", "")),
@@ -76,31 +85,67 @@ public static class ApiService
         return session;
     }
 
-    public static async Task<bool> NewItemAsync(RepairItem item)
+    public static async Task<Response> UpdateItemAsync(RepairItem item)
     {
         if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
-            return false;
+            return new Response()
+            {
+                Message = "No internet connection",
+                Status = "Fail"
+            };
+        
+        item.ProductAge = DateTime.Now.Year - item.ProductYear;
+        string json = JsonSerializer.Serialize<RepairItem>(item, _serializerOptions);
+        StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+        Debug.WriteLine(json);
+        var responseMessage = await _client.PutAsync($"/api/RepairItem/Edit/{item.ID}", content);
+        Debug.WriteLine(responseMessage.StatusCode);
+        Debug.WriteLine(item);
+        return responseMessage.Content.ReadFromJsonAsync<Response>().Result;
+    }
+    
+    public static async Task<Response> NewItemAsync(RepairItem item)
+    {
+        if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            return new Response()
+            {
+                Message = "No internet connection",
+                Status = "Fail"
+            };
 
         try
         {
-            await _client.PostAsJsonAsync("/api/RepairItem", item);
-            return true;
+            item.ProductAge = DateTime.Now.Year - item.ProductYear;
+            string json = JsonSerializer.Serialize<RepairItem>(item, _serializerOptions);
+            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+            Debug.WriteLine(json);
+            var responseMessage = await _client.PostAsync("/api/RepairItem/Add", content);
+            Debug.WriteLine(responseMessage.StatusCode);
+            Debug.WriteLine(item);
+            return responseMessage.Content.ReadFromJsonAsync<Response>().Result;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return false;
+            Debug.WriteLine(e.Message);
+            return new Response()
+            {
+                Message = e.Message,
+                Status = "Fail"
+            };
         }
         
     }
 
     public static async Task<bool> AreSettingsValidAsync(string apiKey, string apiUrl)
     {
+        Debug.WriteLine(apiUrl);
         if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             return false;
 
         try
         {
+            
             HttpClient testClient = new HttpClient()
             {
                 BaseAddress = new Uri(apiUrl),
@@ -110,8 +155,15 @@ public static class ApiService
                     { "ApiKey", apiKey }
                 }
             };
-            var response = await testClient.GetAsync($"Sessions?count=0&orderBy=asc");
-            return response.IsSuccessStatusCode;
+            try
+            {
+                var response = await testClient.GetAsync($"Sessions?count=0&orderBy=asc");
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
         catch
         {

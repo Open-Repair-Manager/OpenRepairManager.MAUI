@@ -31,6 +31,7 @@
         Preferences.Default.Set("SessionID", selectedSessionID);
         Preferences.Default.Set("Category", category);
         Preferences.Default.Set("SessionSlug", selectedSessionSlug);
+        Debug.WriteLine($"{selectedSessionSlug}, {selectedSessionID}, {category}");
         NavManager.NavigateTo($"/RepairItems");
     }
     List<Session> _sessions = new();
@@ -43,30 +44,38 @@
         string apiKey = Preferences.Default.Get("ApiKey", "");
         IList<Session> sessions;
 
-        if (string.IsNullOrWhiteSpace(apiURL))
+        Debug.WriteLine(string.IsNullOrEmpty(apiURL));
+        if (string.IsNullOrEmpty(apiURL))
         {
             NavManager.NavigateTo("/FirstRun");
         }
-        else if (string.IsNullOrWhiteSpace(apiKey))
+        else if (string.IsNullOrEmpty(apiKey))
         {
             NavManager.NavigateTo("/FirstRun");
         }
-
-        bool isValid = await ApiService.AreSettingsValidAsync(apiKey, apiURL);
-        if (!isValid)
+        else
         {
-            NavManager.NavigateTo("/FirstRun");
-        }
-
-        sessions = await ApiService.GetSessionsAsync(0, "desc");
+            bool isValid = await ApiService.AreSettingsValidAsync(apiKey, apiURL);
+            if (!isValid)
+            {
+                NavManager.NavigateTo("/FirstRun");
+            }
+            else
+            {
+                sessions = await ApiService.GetSessionsAsync(0, "desc");
         
-        @foreach (var session in sessions)
-        {
-            _sessions.Add(session);
-        }
+                @foreach (var session in sessions)
+                {
+                    _sessions.Add(session);
+                }
 
-        selectedSessionSlug = _sessions[0].SessionSlug;
-        category = "Reception";
+                selectedSessionSlug = _sessions[0].SessionSlug;
+                category = "Reception";
+            }
+        }
+        
+
+        
 
     }
 }

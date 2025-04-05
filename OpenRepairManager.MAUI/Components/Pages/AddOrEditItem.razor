@@ -1,106 +1,143 @@
 @page "/Item/{IDslug}"
 @using System.Diagnostics
 @using System.Globalization
+@using OpenRepairManager.MAUI.Extensions
 @using OpenRepairManager.MAUI.Services
+@inject IJSRuntime JS
 <h3>AddOrEditItem</h3>
+<div class="form-group">
+    <div class="mb-3">
+        <label class="form-label" for="itemName">Item Name</label>
+        <input class="form-control" id="itemName" type="text" @bind="item.ItemName"/>
+    </div>
+    <div class="mb-3">
+        <label for="custName" class="form-label">Customer Name</label>
+        <input id="custName" type="text" class="form-control" @bind="item.CustomerName"/>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <input @bind="item.ID" type="hidden"/>
+            <label class="form-label" for="productCat">Product Category</label>
+            <select class="form-select" id="productCat" @onchange="IsElec">
+                @if (item.PartnerProductCategory == "Electrical & Devices")
+                {
+                    <option value="General">General</option>
+                    <option selected value="Electrical & Devices">Electrical &amp; Devices</option>
+                    <option value="Textiles">Textiles</option>
+                }
+                else if (item.PartnerProductCategory == "Textiles")
+                {
+                    <option value="General">General</option>
+                    <option value="Electrical & Devices">Electrical &amp; Devices</option>
+                    <option selected value="Textiles">Textiles</option>
+                }
+                else
+                {
+                    <option selected value="General">General</option>
+                    <option value="Electrical & Devices">Electrical &amp; Devices</option>
+                    <option value="Textiles">Textiles</option>
+                }
+            </select>
+        </div>
 
-<label>Item Name</label>
-<input type="text" @bind="item.ItemName"/>
-<input @bind="item.ID" type="hidden"/>
-<label>Product Category</label>
-<select @bind="item.PartnerProductCategory">
-    <option value="Electrical & Devices">Electrical &amp; Devices</option>
-    <option value="General">General</option>
-    <option value="Textiles">Textiles</option>
-</select>
+        <div class="col-md-6" style="@elecVis">
+            <label class="form-label" for="elecSel">Electrical Category</label>
+            <select class="form-select" id="elecSel" @bind="item.ProductCategoryID">
+                <option value="0"></option>
+                @foreach (var cat in ElecCat)
+                {
+                    <option value="@cat.Key">@cat.Value</option>
+                }
+            </select>
+        </div>
+    </div>
+   
+    <div class="mb-3">
+        <label class="form-label" for="iBrand">Brand</label>
+        <input class="form-control" id="iBrand" type="text" @bind="item.Brand"/>
+    </div>
+    
+    <div class="mb-3">
+        <label for="itemYear" class="form-label">Year of Manufacture</label>
+        <input id="itemYear" class="form-control" @bind="item.ProductYear" type="number" min="1800" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"/>
+    </div>
+    
+    <div class="mb-3">
+        <label for="itemIssue" class="form-label">Item Issue</label>
+        <input id="itemIssue" class="form-control" type="text" @bind="item.Problem"/>
+    </div>
 
-<label>Electrical Category</label>
-<select @bind="item.ProductCategoryID">
-    <option value="1">Aircon/dehumidifier</option>
-    <option value="2">Battery/charger/adapter</option>
-    <option value="3">Decorative or safety lights</option>
-    <option value="4">Desktop computer</option>
-    <option value="5">Digital compact camera</option>
-    <option value="6">DSLR/video camera</option>
-    <option value="7">Fan</option>
-    <option value="8">Flat screen</option>
-    <option value="9">Hair & beauty item</option>
-    <option value="10">Handheld entertainment device</option>
-    <option value="11">Headphones</option>
-    <option value="12">Hi-Fi integrated</option>
-    <option value="13">Hi-Fi separates</option>
-    <option value="14">Kettle</option>
-    <option value="15">Lamp</option>
-    <option value="16">Laptop</option>
-    <option value="17">Large home electrical</option>
-    <option value="18">Misc</option>
-    <option value="19">Mobile</option>
-    <option value="20">Musical instrument</option>
-    <option value="21">Paper shredder</option>
-    <option value="22">PC accessory</option>
-    <option value="23">Portable radio</option>
-    <option value="24">Power tool</option>
-    <option value="25">Printer/scanner</option>
-    <option value="26">Projector</option>
-    <option value="27">Sewing machine</option>
-    <option value="28">Small home electrical</option>
-    <option value="29">Small kitchen item</option>
-    <option value="30">Tablet</option>
-    <option value="31">Toaster</option>
-    <option value="32">Toy</option>
-    <option value="33">TV and gaming-related accessories</option>
-    <option value="34">Vacuum</option>
-    <option value="35">Watch/clock</option>
-    <option value="36">Coffee maker</option>
-    <option value="37">Food processor</option>
-    <option value="38">Games console</option>
-    <option value="39">Hair dryer</option>
-    <option value="40">Iron</option>
+    <div class="mb-3">
+        <div class="col-md-6">
+            
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6" style="@editVis">
+            <label for="isEOL" class="form-label">Status</label>
+            <select id="isEOL" class="form-select" @onchange="IsEOL">
+                @if (item.RepairStatus == 0)
+                {
+                    <option value="0"></option>
+                    <option value="1">Fixed</option>
+                    <option value="2">Repairable</option>
+                    <option value="3">End of Life</option>
+                }
+                else if (item.RepairStatus == 1)
+                {
+                    <option value="0"></option>
+                    <option selected value="1">Fixed</option>
+                    <option value="2">Repairable</option>
+                    <option value="3">End of Life</option>
+                }
+                else if (item.RepairStatus == 2)
+                {
+                    <option value="0"></option>
+                    <option value="1">Fixed</option>
+                    <option selected value="2">Repairable</option>
+                    <option value="3">End of Life</option>
+                }
+                else if (item.RepairStatus == 3)
+                {
+                    <option value="0"></option>
+                    <option value="1">Fixed</option>
+                    <option value="2">Repairable</option>
+                    <option selected value="3">End of Life</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6" style="@eolVis">
+            <label for="repBar" class="form-label">Repair Barrier</label>
+            <select id="repBar" class="form-select" @bind="item.RepairBarrier">
+                <option value="0"></option>
+                <option value="1">Spare Parts Not Available</option>
+                <option value="2">Spare Parts Too Expensive</option>
+                <option value="3">No Way To Open Product</option>
+                <option value="4">Repair Information Not Available</option>
+                <option value="6">Item Too Worn Out</option>
+                <option value="5">Lack of Equipment</option>
+            </select>
+        </div>
+    </div>
 
-</select>
-
-<label>Brand</label>
-<input type="text" @bind="item.Brand"/>
-
-<label>Year of Manufacture</label>
-<input @Bind="item.ProductYear" type="number"/>
-
-<label>Item Issue</label>
-<input type="text" @bind="item.Problem"/>
-
-<label style="@vis">Status</label>
-<select @bind="item.RepairStatus">
-    <option value="1">Fixed</option>
-    <option value="2">Repairable</option>
-    <option value="3">End of Life</option>
-</select>
-
-<label>Repair Barrier</label>
-<select @bind="item.RepairBarrier">
-    <option hidden="hidden" value="0">N/A</option>
-    <option value="1">Spare Parts Not Available</option>
-    <option value="2">Spare Parts Too Expensive</option>
-    <option value="3">No Way To Open Product</option>
-    <option value="4">Repair Information Not Available</option>
-    <option value="6">Item Too Worn Out</option>
-    <option value="5">Lack of Equipment</option>
-</select>
-
-<label>Customer Name</label>
-<input type="text" @bind="item.CustomerName"/>
-
-<label>Notes</label>
-<input type="text" @bind="item.ItemNotes"/>
-
-<input type="submit" onclick="@SaveItemAsync" value="Save" />
-
-<input type="button" @onclick="@Test" value="test"/>
+    <div class="mb-3">
+        <label for="itemNotes" class="form-label">Notes</label>
+        <input id="itemNotes" class="form-control" type="text" @bind="item.ItemNotes"/>
+    </div>
+    <div class="mb-3">
+        <input class="btn btn-success" type="submit" onclick="@SaveItemAsync" value="Save"/> <a class="btn btn-danger" href="/RepairItems">Cancel</a>
+    </div>
+    
+</div>
 
 @code {
+    
+    Dictionary<int, string> ElecCat = ORSDictionaries.GetElectricalIdDictionary();
 
-    bool isEditVisible = false;
-
-    string vis = "display: none";
+    string editVis = "display: none";
+    string elecVis = "display: none";
+    string eolVis = "display: none";
     
     [Parameter] 
     public string IDslug { get; set; }
@@ -109,19 +146,68 @@
     
     private int ID { get; set; }
 
-    private void Test()
+    private bool isEdit = false;
+    
+    private void IsElec(ChangeEventArgs e)
     {
-        vis = "";
+        // Update the value of item.PartnerProductCategory
+        item.PartnerProductCategory = e.Value.ToString();
+        Debug.WriteLine(e.Value.ToString());
+
+        if (e.Value.ToString() == "Electrical & Devices")
+            elecVis = "";
+        else
+        {
+            elecVis = "display: none";
+            item.ProductCategory = "";
+            item.ProductCategoryID = 0;
+        }
+            
+    }
+
+    private void IsEOL(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int Id))
+        {
+            item.RepairStatus = Id;
+            if (item.RepairStatus == 3)
+            {
+                eolVis = "";
+            }
+            else
+            {
+                eolVis = "display: none";
+            }
+        }
+
+        
     }
     
     private async Task SaveItemAsync()
     {
-        var result = await ApiService.NewItemAsync(item);
+        if (item.ProductCategoryID != 0)
+            item.ProductCategory = ORSDictionaries.GetCatString((int)item.ProductCategoryID);
 
-        if (result)
+        if (isEdit)
         {
-            NavManager.NavigateTo("/RepairItems");
+            var result = await ApiService.UpdateItemAsync(item);
+            if (result.Status == "Success")
+            {
+                NavManager.NavigateTo("/RepairItems");
+            }
         }
+        else
+        {
+            var result = await ApiService.NewItemAsync(item);
+            if (result.Status == "Success")
+            {
+                NavManager.NavigateTo("/RepairItems");
+            }
+        }
+        
+        
+
+        
     }
 
     protected override async Task OnInitializedAsync()
@@ -131,11 +217,26 @@
             if (Id != 0)
             {
                 item = await ApiService.GetRepairItemAsync(Id);
+                editVis = "";
+                isEdit = true;
+                if (item.PartnerProductCategory == "Electrical & Devices")
+                    elecVis = "";
+                if (item.RepairStatus == 3)
+                    eolVis = "";
+            }
+            else
+            {
+                item.SessionID = Preferences.Default.Get("SessionID", 0);
+                item.PartnerProductCategory = "General";
+                item.ProductCategoryID = 0;
+                Debug.WriteLine(item.ProductCategoryID);
             }
         }
-
-        item.SessionID = Preferences.Default.Get("SessionID", 0);
+        
+        
 
     }
 
+    
+    
 }
