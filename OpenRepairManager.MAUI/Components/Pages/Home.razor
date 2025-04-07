@@ -2,8 +2,12 @@
 @using OpenRepairManager.MAUI.Services
 @using System.Diagnostics
 @using OpenRepairManager.MAUI.Components.Layout
+@layout MazerLayout
 
-
+<script type="text/javascript">
+    document.getElementById('dashNav').classList.add('active')
+    document.getElementById('repairsMenu').classList.remove('active')
+</script>
 @code
 {
     protected override void OnInitialized()

@@ -3,16 +3,27 @@
 @using Microsoft.Maui.Storage
 @using OpenRepairManager.MAUI.Components.Layout
 @using OpenRepairManager.MAUI.Services
-@layout SetupLayout
-@inject NavigationManager NavManager
-<h3>FirstRun</h3>
 
-<label>API URL</label>
-<input @bind="apiUrl" id="ApiUrl" type="text" />
-<label>API Key</label>
-<input @bind="@apiKey" id="ApiToken" type="text" />
-<button @onclick="Submit" type="submit" class="btn btn-primary">Submit</button>
-<h2>@error</h2>
+<div class="mb-3">
+    <label for="ApiUrl" class="form-label">API Address</label>
+    <input @bind="apiUrl" class="form-control" id="ApiUrl" placeholder="https://your.address/api/" type="text" />
+</div>
+
+<div class="mb-3">
+    <label for="ApiToken" class="form-label">API Key</label>
+    <input @bind="@apiKey" placeholder="ORM-XXXXXXXX" id="ApiToken" class="form-control" type="text" />
+</div>
+
+<div class="mb-3">
+    <button @onclick="Submit" type="submit" class="btn btn-primary">Submit</button>
+    <h2 class="text-danger">@error</h2>
+</div>
+
+
+<script type="text/javascript">
+    document.getElementById("setupTitle").innerHTML = "API Setup";
+</script>
+
 @code {
     string apiKey;
     string apiUrl;
@@ -69,6 +80,10 @@
             Preferences.Default.Set("ApiUrl", apiUrl);
 
             NavManager.NavigateTo("/");
+        }
+        else
+        {
+            error = "Invalid settings";
         }
         
         Debug.WriteLine(result);

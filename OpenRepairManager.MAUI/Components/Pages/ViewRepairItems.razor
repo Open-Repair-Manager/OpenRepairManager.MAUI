@@ -1,25 +1,86 @@
 @page "/RepairItems"
+@layout MazerLayout
 @using System.Diagnostics
 @using OpenRepairManager.MAUI.Services
-<h3>ViewRepairItems</h3>
 
-<table>
-    <thead>
-    <tr>
-        <th>Repair Item</th>
-    </tr>
-    </thead>
-    <tbody>
-        @foreach (var repairItem in _repairItems)
-        {
-            <tr>
-                <td>@repairItem.ItemName</td>
-                <td><a href="/Item/@repairItem.ID">Edit</a></td>
-            </tr>
-        }
-    </tbody>
-</table>
+<section class="section">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">In Progress Items</h4>
+        </div>
+        <div class="card-body">
+            <p><a class="btn btn-primary" href="/Item/0">New Item</a></p>
+            <div class="table-responsive">
+                <table class="table table-striped mb-0" id="locTable">
+                    <thead>
+                    <tr>
+                        <th>Repair Item</th>
+                        <th>Category</th>
+                        <th>Customer</th>
+                        <th>Issue</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var repairItem in _repairItems.Where(i => !i.Completed))
+                    {
+                        <tr>
+                            <td>@repairItem.ItemName</td>
+                            <td>@repairItem.PartnerProductCategory</td>
+                            <td>@repairItem.CustomerName</td>
+                            <td>@repairItem.Problem</td>
+                            <td><a href="/Item/@repairItem.ID">Edit</a></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Completed Items</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0" id="locTable">
+                    <thead>
+                    <tr>
+                        <th>Repair Item</th>
+                        <th>Category</th>
+                        <th>Customer</th>
+                        <th>Issue</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var repairItem in _repairItems.Where(i => i.Completed))
+                    {
+                        <tr>
+                            <td>@repairItem.ItemName</td>
+                            <td>@repairItem.PartnerProductCategory</td>
+                            <td>@repairItem.CustomerName</td>
+                            <td>@repairItem.Problem</td>
+                            <td><a href="/Item/@repairItem.ID">Edit</a></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    document.getElementById('pageTitle').innerHTML = "View Repair Items";
+    document.getElementById('pageTitle2').innerHTML = "View Repair Items";
+</script>
+<script type="text/javascript">
+    document.getElementById('repairsMenu').classList.add('active')
+    document.getElementById('dashNav').classList.remove('active')
+</script>
 @code {
     private List<RepairItem> _repairItems = new();
     
@@ -29,6 +90,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        
         _repairItems.Add(new()
         {
             ID = 0,

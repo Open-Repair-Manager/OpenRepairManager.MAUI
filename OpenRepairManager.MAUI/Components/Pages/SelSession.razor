@@ -4,23 +4,31 @@
 @using System.Diagnostics
 @using OpenRepairManager.MAUI.Components.Layout
 
-<h1>Select Session</h1>
+<div class="mb-3">
+    <label class="form-label" for="selSessions">Session</label>
+    <select class="form-select" id="selSessions" @bind="@selectedSessionSlug">
+        @foreach (var session in _sessions)
+        {
+            <option value="@session.SessionSlug">@session.SessionName</option>
+        }
+    </select>
+</div>
+<div class="mb-3">
+    <label for="selCat" class="form-label">Category</label>
+    <select id="selCat" class="form-select" @bind="category">
+        <option value="Reception">Reception</option>
+        <option value="Electrical & Devices">Electrical &amp; Devices</option>
+        <option value="General">General</option>
+    </select>
+    
+</div>
+<div class="mb-3">
+    <button class="btn btn-success" @onclick="SaveSessionsAsync">Confirm</button>
+</div>
 
-<label>Session</label>
-<select @bind="@selectedSessionSlug">
-    @foreach (var session in _sessions)
-    {
-        <option value="@session.SessionSlug">@session.SessionName</option>
-    }
-</select>
-<br/>
-<label>Category</label>
-<select @bind="category">
-    <option value="Reception">Reception</option>
-    <option value="Electrical & Devices">Electrical &amp; Devices</option>
-    <option value="General">General</option>
-</select>
-<button @onclick="SaveSessionsAsync">Save</button>
+<script type="text/javascript">
+    document.getElementById("setupTitle").innerHTML = "Select Session";
+</script>
 
 @code
 {

@@ -4,132 +4,165 @@
 @using OpenRepairManager.MAUI.Extensions
 @using OpenRepairManager.MAUI.Services
 @inject IJSRuntime JS
-<h3>AddOrEditItem</h3>
-<div class="form-group">
-    <div class="mb-3 input-group has-validation">
-        <label class="form-label" for="itemName">Item Name</label>
-        <input required class="form-control" id="itemName" type="text" @bind="item.ItemName"/>
-    </div>
-    <div class="mb-3">
-        <label for="custName" class="form-label">Customer Name</label>
-        <input required id="custName" type="text" class="form-control" @bind="item.CustomerName"/>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <input @bind="item.ID" type="hidden"/>
-            <label class="form-label" for="productCat">Product Category</label>
-            <select class="form-select" id="productCat" @onchange="IsElec">
-                @if (item.PartnerProductCategory == "Electrical & Devices")
-                {
-                    <option value="General">General</option>
-                    <option selected value="Electrical & Devices">Electrical &amp; Devices</option>
-                    <option value="Textiles">Textiles</option>
-                }
-                else if (item.PartnerProductCategory == "Textiles")
-                {
-                    <option value="General">General</option>
-                    <option value="Electrical & Devices">Electrical &amp; Devices</option>
-                    <option selected value="Textiles">Textiles</option>
-                }
-                else
-                {
-                    <option selected value="General">General</option>
-                    <option value="Electrical & Devices">Electrical &amp; Devices</option>
-                    <option value="Textiles">Textiles</option>
-                }
-            </select>
-        </div>
+@layout MazerLayout
 
-        <div class="col-md-6" style="@elecVis">
-            <label class="form-label" for="elecSel">Electrical Category</label>
-            <select class="form-select" id="elecSel" @bind="item.ProductCategoryID">
-                <option value="0"></option>
-                @foreach (var cat in ElecCat)
-                {
-                    <option value="@cat.Key">@cat.Value</option>
-                }
-            </select>
+<section class="section">
+    <div class="card">
+        <div class="card-header">
+            @if (isEdit)
+            {
+                <h4 class="card-title">Edit Item</h4>
+            }
+            else
+            {
+                <h4 class="card-title">Add New Item</h4>
+            }
+        
         </div>
-    </div>
+        <div class="card-body">
+            <div class="form-group">
+                <div class="mb-3 has-validation">
+                    <label class="form-label" for="itemName">Item Name</label>
+                    <input required class="form-control" id="itemName" type="text" @bind="item.ItemName"/>
+                </div>
+                <div class="mb-3">
+                    <label for="custName" class="form-label">Customer Name</label>
+                    <input required id="custName" type="text" class="form-control" @bind="item.CustomerName"/>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input @bind="item.ID" type="hidden"/>
+                        <label class="form-label" for="productCat">Product Category</label>
+                        <select class="form-select" id="productCat" @onchange="IsElec">
+                            @if (item.PartnerProductCategory == "Electrical & Devices")
+                            {
+                                <option value="General">General</option>
+                                <option selected value="Electrical & Devices">Electrical &amp; Devices</option>
+                                <option value="Textiles">Textiles</option>
+                            }
+                            else if (item.PartnerProductCategory == "Textiles")
+                            {
+                                <option value="General">General</option>
+                                <option value="Electrical & Devices">Electrical &amp; Devices</option>
+                                <option selected value="Textiles">Textiles</option>
+                            }
+                            else
+                            {
+                                <option selected value="General">General</option>
+                                <option value="Electrical & Devices">Electrical &amp; Devices</option>
+                                <option value="Textiles">Textiles</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6" style="@elecVis">
+                        <label class="form-label" for="elecSel">Electrical Category</label>
+                        <select class="form-select" id="elecSel" @bind="item.ProductCategoryID">
+                            <option value="0"></option>
+                            @foreach (var cat in ElecCat)
+                            {
+                                <option value="@cat.Key">@cat.Value</option>
+                            }
+                        </select>
+                    </div>
+                </div>
    
-    <div class="mb-3">
-        <label class="form-label" for="iBrand">Brand</label>
-        <input required class="form-control" id="iBrand" type="text" @bind="item.Brand"/>
-    </div>
+                <div class="mb-3">
+                    <label class="form-label" for="iBrand">Brand</label>
+                    <input required class="form-control" id="iBrand" type="text" @bind="item.Brand"/>
+                </div>
     
-    <div class="mb-3">
-        <label for="itemYear" class="form-label">Year of Manufacture</label>
-        <input required id="itemYear" class="form-control" @bind="item.ProductYear" type="number" min="1800" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"/>
-    </div>
+                <div class="mb-3">
+                    <label for="itemYear" class="form-label">Year of Manufacture</label>
+                    <input required id="itemYear" class="form-control" @bind="item.ProductYear" type="number" min="1800" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"/>
+                </div>
     
-    <div class="mb-3">
-        <label for="itemIssue" class="form-label">Item Issue</label>
-        <input required id="itemIssue" class="form-control" type="text" @bind="item.Problem"/>
-    </div>
+                <div class="mb-3">
+                    <label for="itemIssue" class="form-label">Item Issue</label>
+                    <input required id="itemIssue" class="form-control" type="text" @bind="item.Problem"/>
+                </div>
+    
+                <div class="row">
+                    <div class="col-md-6" style="@editVis">
+                        <label for="isEOL" class="form-label">Status</label>
+                        <select id="isEOL" class="form-select" @onchange="IsEOL">
+                            @if (item.RepairStatus == 0)
+                            {
+                                <option value="0"></option>
+                                <option value="1">Fixed</option>
+                                <option value="2">Repairable</option>
+                                <option value="3">End of Life</option>
+                            }
+                            else if (item.RepairStatus == 1)
+                            {
+                                <option value="0"></option>
+                                <option selected value="1">Fixed</option>
+                                <option value="2">Repairable</option>
+                                <option value="3">End of Life</option>
+                            }
+                            else if (item.RepairStatus == 2)
+                            {
+                                <option value="0"></option>
+                                <option value="1">Fixed</option>
+                                <option selected value="2">Repairable</option>
+                                <option value="3">End of Life</option>
+                            }
+                            else if (item.RepairStatus == 3)
+                            {
+                                <option value="0"></option>
+                                <option value="1">Fixed</option>
+                                <option value="2">Repairable</option>
+                                <option selected value="3">End of Life</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6" style="@eolVis">
+                        <label for="repBar" class="form-label">Repair Barrier</label>
+                        <select id="repBar" class="form-select" @bind="item.RepairBarrier">
+                            <option value="0"></option>
+                            <option value="1">Spare Parts Not Available</option>
+                            <option value="2">Spare Parts Too Expensive</option>
+                            <option value="3">No Way To Open Product</option>
+                            <option value="4">Repair Information Not Available</option>
+                            <option value="6">Item Too Worn Out</option>
+                            <option value="5">Lack of Equipment</option>
+                        </select>
+                    </div>
+                </div>
 
-    <div class="mb-3">
-        <div class="col-md-6">
-            
-        </div>
-    </div>
+                <div class="mb-3">
+                    <label for="itemNotes" class="form-label">Notes</label>
+                    <input id="itemNotes" class="form-control" type="text" @bind="item.ItemNotes"/>
+                </div>
+                <div class="mb-3">
+                    <div class="col-md-6 form-check form-switch" style="@editVis">
+                        <label for="isComplete" class="form-check-label">Complete?</label>
+                        <input type="checkbox" @bind="item.Completed" id="isComplete" class="form-check-input" role="switch"/>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <input class="btn btn-success" type="submit" onclick="@SaveItemAsync" value="Save"/> <a class="btn btn-danger" href="/RepairItems">Cancel</a>
+                </div>
     
-    <div class="row">
-        <div class="col-md-6" style="@editVis">
-            <label for="isEOL" class="form-label">Status</label>
-            <select id="isEOL" class="form-select" @onchange="IsEOL">
-                @if (item.RepairStatus == 0)
-                {
-                    <option value="0"></option>
-                    <option value="1">Fixed</option>
-                    <option value="2">Repairable</option>
-                    <option value="3">End of Life</option>
-                }
-                else if (item.RepairStatus == 1)
-                {
-                    <option value="0"></option>
-                    <option selected value="1">Fixed</option>
-                    <option value="2">Repairable</option>
-                    <option value="3">End of Life</option>
-                }
-                else if (item.RepairStatus == 2)
-                {
-                    <option value="0"></option>
-                    <option value="1">Fixed</option>
-                    <option selected value="2">Repairable</option>
-                    <option value="3">End of Life</option>
-                }
-                else if (item.RepairStatus == 3)
-                {
-                    <option value="0"></option>
-                    <option value="1">Fixed</option>
-                    <option value="2">Repairable</option>
-                    <option selected value="3">End of Life</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-6" style="@eolVis">
-            <label for="repBar" class="form-label">Repair Barrier</label>
-            <select id="repBar" class="form-select" @bind="item.RepairBarrier">
-                <option value="0"></option>
-                <option value="1">Spare Parts Not Available</option>
-                <option value="2">Spare Parts Too Expensive</option>
-                <option value="3">No Way To Open Product</option>
-                <option value="4">Repair Information Not Available</option>
-                <option value="6">Item Too Worn Out</option>
-                <option value="5">Lack of Equipment</option>
-            </select>
+            </div>
         </div>
     </div>
+</section>
+@if (isEdit)
+{
+    <script>
+        document.getElementById('pageTitle').innerHTML = "Edit Item";
+        document.getElementById('pageTitle2').innerHTML = "Edit Item";
+    </script>
+}
+else
+{
+    <script>
+        document.getElementById('pageTitle').innerHTML = "New Item";
+        document.getElementById('pageTitle2').innerHTML = "New Item";
+    </script>
+}
 
-    <div class="mb-3">
-        <label for="itemNotes" class="form-label">Notes</label>
-        <input id="itemNotes" class="form-control" type="text" @bind="item.ItemNotes"/>
-    </div>
-    <div class="mb-3">
-        <input class="btn btn-success" type="submit" onclick="@SaveItemAsync" value="Save"/> <a class="btn btn-danger" href="/RepairItems">Cancel</a>
-    </div>
-    
-</div>
 
 @code {
     

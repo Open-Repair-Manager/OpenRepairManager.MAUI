@@ -1,9 +1,30 @@
 @inherits LayoutComponentBase
-<div class="page">
-    <main>
+<nav class="navbar navbar-light">
+    <div class="container d-block">
+        <h5>
+            <a>Open Repair Manager</a>
+        </h5>
+    </div>
+</nav>
 
-        <article class="content px-4">
+
+<div class="container">
+    <div class="card mt-5">
+        <div class="card-header">
+            <h4 id="setupTitle" class="card-title"></h4>
+        </div>
+        <div class="card-body">
             @Body
-        </article>
-    </main>
+        </div>
+    </div>
 </div>
+
+
+
+<script src="/assets/static/js/components/dark.js"></script>
+<script src="/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+
+
+<script src="/assets/compiled/js/app.js"></script>
+<!-- Need: Apexcharts -->
+<script src="/assets/static/js/pages/dashboard.js"></script>
