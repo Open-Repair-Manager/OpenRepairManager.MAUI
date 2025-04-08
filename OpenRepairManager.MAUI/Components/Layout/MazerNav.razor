@@ -27,13 +27,32 @@
                         <span>Repairs</span>
                     </a>
                 </li>
-                
-                <li id="settingsMenu" class="sidebar-item">
-                    <a href="/Settings" class="sidebar-link">
-                        <i class="bi bi-sliders"></i>
-                        <span>Settings</span>
+            </ul>
+
+            <ul class="menu">
+                <li class="sidebar-title"><h5>Settings</h5></li>
+                <li class="sidebar-title"><h6 id="sideSession">Session:&nbsp;@SelSession </h6></li>
+                <li class="sidebar-title"><h6 id="sideCat">Station:&nbsp;@Cat</h6></li>
+
+                <li id="sessionNav" class="sidebar-item">
+                    <a href="/SessionSelect" class="sidebar-link">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>Change Session</span>
                     </a>
                 </li>
+                <li id="apiNav" class="sidebar-item">
+                    <a href="/FirstRun" class="sidebar-link">
+                        <i class="bi bi-sliders"></i>
+                        <span>API Setup</span>
+                    </a>
+                </li>
+                <li id="aboutNav" class="sidebar-item">
+                    <a href="/About" class="sidebar-link">
+                        <i class="bi bi-info-circle"></i>
+                        <span>About</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
 
@@ -73,3 +92,15 @@
         
     </div>
 </div>
+
+@code{
+    string SelSession;
+    string Cat;
+    
+    protected override void OnInitialized()
+    {
+        SelSession = Preferences.Default.Get("SessionName", "None Selected");
+        Cat = Preferences.Default.Get("Category", "None Selected");
+    }
+
+}

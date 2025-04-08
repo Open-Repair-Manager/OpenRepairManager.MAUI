@@ -1,4 +1,5 @@
 @page "/FirstRun"
+@layout SetupLayout;
 @using System.Diagnostics
 @using Microsoft.Maui.Storage
 @using OpenRepairManager.MAUI.Components.Layout
@@ -23,17 +24,25 @@
 <script type="text/javascript">
     document.getElementById("setupTitle").innerHTML = "API Setup";
 </script>
+<script type="text/javascript">
+    document.getElementById('dashNav').classList.remove('active')
+    document.getElementById('repairsMenu').classList.remove('active')
+    document.getElementById('sessionNav').classList.remove('active')
+    document.getElementById('apiNav').classList.add('active')
+    document.getElementById('aboutNav').classList.remove('active')
+</script>
 
 @code {
     string apiKey;
     string apiUrl;
-
+    
     string error;
     
     protected override async Task OnInitializedAsync()
     {
         apiKey = Preferences.Default.Get("ApiKey", "");
         apiUrl = Preferences.Default.Get("ApiUrl", "");
+
     }
     
     public static async Task<bool> AreSettingsValidAsync(string apiKey, string apiUrl)

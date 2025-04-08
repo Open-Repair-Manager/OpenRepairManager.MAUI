@@ -28,17 +28,28 @@
 
 <script type="text/javascript">
     document.getElementById("setupTitle").innerHTML = "Select Session";
+    document.getElementById('pageTitle2').innerHTML = "Edit Item";
+</script>
+
+<script type="text/javascript">
+    document.getElementById('dashNav').classList.remove('active')
+    document.getElementById('repairsMenu').classList.remove('active')
+    document.getElementById('sessionNav').classList.add('active')
+    document.getElementById('apiNav').classList.remove('active')
+    document.getElementById('aboutNav').classList.remove('active')
 </script>
 
 @code
 {
     private async Task SaveSessionsAsync()
     {
+        Session SelectedSession = _sessions.First(s => s.SessionSlug.ToUpper() == selectedSessionSlug.ToUpper());
         //Debug.WriteLine($"{selectedSessionID} {selectedSessionSlug}, {category}");
-        selectedSessionID = _sessions.First(s => s.SessionSlug.ToUpper() == selectedSessionSlug.ToUpper()).SessionID;
+        selectedSessionID = SelectedSession.SessionID;
         Preferences.Default.Set("SessionID", selectedSessionID);
         Preferences.Default.Set("Category", category);
         Preferences.Default.Set("SessionSlug", selectedSessionSlug);
+        Preferences.Default.Set("SessionName", SelectedSession.SessionName);
         Debug.WriteLine($"{selectedSessionSlug}, {selectedSessionID}, {category}");
         NavManager.NavigateTo($"/RepairItems");
     }
