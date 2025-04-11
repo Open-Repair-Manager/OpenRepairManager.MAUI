@@ -118,10 +118,10 @@ public static class ApiService
             item.ProductAge = DateTime.Now.Year - item.ProductYear;
             string json = JsonSerializer.Serialize<RepairItem>(item, _serializerOptions);
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-            Debug.WriteLine(json);
+            //Debug.WriteLine(json);
             var responseMessage = await _client.PostAsync("/api/RepairItem/Add", content);
-            Debug.WriteLine(responseMessage.StatusCode);
-            Debug.WriteLine(item);
+            //Debug.WriteLine(responseMessage.StatusCode);
+            //Debug.WriteLine(item);
             return responseMessage.Content.ReadFromJsonAsync<Response>().Result;
         }
         catch (Exception e)
@@ -137,9 +137,30 @@ public static class ApiService
         
     }
 
+    public static async Task<Response> ReturningItemAsync(ReturningItemModel item)
+    {
+        try
+        {
+            string json = JsonSerializer.Serialize<ReturningItemModel>(item, _serializerOptions);
+            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+            Debug.WriteLine(content);
+            var responseMessage = await _client.PostAsync("/api/ReturningItem", content);
+            return responseMessage.Content.ReadFromJsonAsync<Response>().Result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            Debug.WriteLine(e.Message);
+            return new Response()
+            {
+                Message = e.Message,
+                Status = "Fail"
+            };
+        }
+    }
+
     public static async Task<bool> AreSettingsValidAsync(string apiKey, string apiUrl)
     {
-        Debug.WriteLine(apiUrl);
         if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             return false;
 
@@ -151,7 +172,6 @@ public static class ApiService
                 BaseAddress = new Uri(apiUrl),
                 DefaultRequestHeaders =
                 {
-                    //test API Key - localhost db only - Store in environment variable later
                     { "ApiKey", apiKey }
                 }
             };

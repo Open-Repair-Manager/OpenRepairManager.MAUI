@@ -9,7 +9,7 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        return new Window(new MainPage()) { Title = "OpenRepairManager.MAUI" };
+        return new Window(new MainPage()) { Title = "Open Repair Manager" };
     }
 
 }

@@ -1,6 +1,7 @@
 @page "/RepairItems"
 @layout MazerLayout
 @using System.Diagnostics
+@using System.Timers
 @using OpenRepairManager.MAUI.Services
 
 <section class="section">
@@ -9,7 +10,7 @@
             <h4 class="card-title">In Progress Items</h4>
         </div>
         <div class="card-body">
-            <p><a class="btn btn-primary" href="/Item/0">New Item</a></p>
+            <p><a class="btn btn-primary" href="/Item/0">New Item</a>&nbsp; <a @onclick="RefreshAsync">Refresh</a></p>
             <div class="table-responsive">
                 <table class="table table-striped mb-0" id="locTable">
                     <thead>
@@ -105,6 +106,13 @@
         if (string.IsNullOrEmpty(categorySlug))
             NavManager.NavigateTo("/");
         
+        var repairItems = await ApiService.GetStatsAsync(sessionSlug, categorySlug);
+        
+        _repairItems = repairItems.ToList();
+    }
+    
+    private async Task RefreshAsync()
+    {
         var repairItems = await ApiService.GetStatsAsync(sessionSlug, categorySlug);
         
         _repairItems = repairItems.ToList();

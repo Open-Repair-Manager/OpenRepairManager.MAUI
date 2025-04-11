@@ -1,3 +1,4 @@
+@using OpenRepairManager.MAUI.Components.Pages
 <div id="sidebar">
     <div class="sidebar-wrapper active">
         <div class="sidebar-header position-relative">
@@ -25,6 +26,12 @@
                     <a href="/RepairItems" class="sidebar-link">
                         <i class="bi bi-map"></i>
                         <span>Repairs</span>
+                    </a>
+                </li>
+                <li id="repairsMenu2" class="sidebar-item">
+                    <a @onclick="() => App.Current.MainPage.Navigation.PushModalAsync(new BarcodeScanner())" class="sidebar-link">
+                        <i class="bi bi-map"></i>
+                        <span>ReturningItem</span>
                     </a>
                 </li>
             </ul>
