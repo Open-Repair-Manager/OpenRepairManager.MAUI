@@ -1,0 +1,55 @@
+@page "/PrintSettings"
+@layout MazerLayout
+<section class="section">
+    <div class="row">
+        <div class="col-12 col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Print Server</h3>
+                </div>
+                <div class="card-body">
+                    <div style="@errorStyle" class="alert alert-success">@message</div>
+                    <div class="form-group">
+                        <label>Print Server</label>
+                        <input id="IPLabel" @bind="IP" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <a @onclick="Save" type="submit" class="btn btn-primary">Save</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+    document.getElementById('dashNav').classList.remove('active')
+    document.getElementById('repairsMenu').classList.remove('active')
+    document.getElementById('sessionNav').classList.remove('active')
+    document.getElementById('apiNav').classList.remove('active')
+    document.getElementById('aboutNav').classList.remove('active')
+    document.getElementById('printNav').classList.add('active')
+</script>
+
+<script>
+    document.getElementById('pageTitle').innerHTML = "Print Settings";
+    document.getElementById('pageTitle2').innerHTML = "Print Settings";
+</script>
+
+@code {
+    string IP;
+    string errorStyle = "display: none";
+    string message;
+
+    protected override void OnInitialized()
+    {
+        IP = Preferences.Default.Get("PrintIP", "");
+    }
+
+    private void Save()
+    {
+        Preferences.Default.Set("PrintIP", IP);
+        errorStyle = "";
+        message = "IP Saved!";
+    }
+}
