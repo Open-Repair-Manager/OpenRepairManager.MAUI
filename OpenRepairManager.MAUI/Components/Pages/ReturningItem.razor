@@ -1,0 +1,37 @@
+@page "/ReturningItem"
+@using OpenRepairManager.Common.Models.ApiModels
+@using OpenRepairManager.MAUI.Services
+@layout MazerLayout
+
+<section class="section">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Returning Item</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="ItemGUID" class="form-label">Returning Item</label>
+                <input id="ItemGUID" @bind="itemGuid" type="text" class="form-control" placeholder="Scan QR Code">
+                <input type="submit" @onclick="RegReturningItem" class="btn btn-primary" value="Enter"/>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+
+    string itemGuid;
+    private async Task RegReturningItem()
+    {
+        ReturningItemModel _item = new()
+        {
+            SessionID = Preferences.Default.Get("SessionID", 0),
+            Guid = Guid.Parse(itemGuid)
+        };
+        var response = await ApiService.ReturningItemAsync(_item);
+        if (response.Status == "Success")
+        {
+            NavManager.NavigateTo("/RepairItems");
+        }
+    }
+}

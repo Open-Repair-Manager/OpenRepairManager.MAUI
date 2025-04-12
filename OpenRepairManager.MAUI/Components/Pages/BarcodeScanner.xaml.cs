@@ -28,7 +28,7 @@ public partial class BarcodeScanner : ContentPage
             PossibleFormats = { BarcodeFormat.QR_CODE },
             ReadMultipleCodes = false,
             TryHarder = true,
-            TryInverted = true
+            TryInverted = true,
         };
         cameraView.BarCodeDetectionFrameRate = 10;
         cameraView.BarCodeDetectionMaxThreads = 5;
