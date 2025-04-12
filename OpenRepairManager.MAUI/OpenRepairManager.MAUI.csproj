@@ -86,6 +86,10 @@
     <ItemGroup>
       <ProjectReference Include="..\CLRSBRepairItem\CLRSBRepairItem.csproj" />
     </ItemGroup>
-    
+    <Target Name="_SkipCodesignVerify" BeforeTargets="_CodesignVerify" AfterTargets="_CodesignAppBundle">
+        <PropertyGroup>
+            <_RequireCodeSigning>false</_RequireCodeSigning>
+        </PropertyGroup>
+    </Target>
     
 </Project>

@@ -36,5 +36,7 @@
     <string>Assets.xcassets/appicon.appiconset</string>
     <key>NSCameraUsageDescription</key>
     <string>This app uses barcode scanning to...</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Open Repair Manager © 2025 Mitch Hawks</string>
 </dict>
 </plist>
