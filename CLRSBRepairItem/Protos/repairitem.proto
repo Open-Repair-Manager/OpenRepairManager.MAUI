@@ -1,0 +1,24 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "OpenRepairManager";
+
+package repairitem;
+
+// The greeting service definition.
+service PrintItem {
+  // Sends a greeting
+  rpc PrintItem (RepairItemRequest) returns (PrintReply);
+}
+
+// The request message containing the user's name.
+message RepairItemRequest {
+  string id = 1;
+  string item = 2;
+  string owner = 3;
+  string whatwrong = 4;
+}
+
+// The response message containing the greetings.
+message PrintReply {
+  string messages = 1;
+}

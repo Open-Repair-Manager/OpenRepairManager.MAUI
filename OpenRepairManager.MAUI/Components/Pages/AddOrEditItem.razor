@@ -233,6 +233,7 @@ else
             var result = await ApiService.UpdateItemAsync(item);
             if (result.Status == "Success")
             {
+                PrintItemService.PrintLabel(item);
                 NavManager.NavigateTo("/RepairItems");
             }
         }

@@ -48,12 +48,14 @@ public partial class BarcodeScanner : ContentPage
         var response = await ApiService.ReturningItemAsync(_item);
         if (response.Status == "Success")
         {
-            //await DisplayAlert("Success", "Item imported!", "OK");
+            await cameraView.StopCameraAsync();
+            await DisplayAlert("Success", "Item imported!", "OK");
             await App.Current.MainPage.Navigation.PopModalAsync();
         }
         else
         {
-            //await DisplayAlert("Error", response.Message, "OK");
+            await cameraView.StopCameraAsync();
+            await DisplayAlert("Error", response.Message, "OK");
             await App.Current.MainPage.Navigation.PopModalAsync();
         }
     }
@@ -68,7 +70,7 @@ public partial class BarcodeScanner : ContentPage
             {
                 if (await cameraView.StartCameraAsync() == CameraResult.Success)
                 {
-                    controlButton.Text = "Stop";
+                    controlButton.Text = "Cancel";
                     playing = true;
                 }
             });
@@ -77,19 +79,7 @@ public partial class BarcodeScanner : ContentPage
     }
     private async void Button_Clicked(object sender, EventArgs e)
     {
-        cameraView.Camera = cameraView.Cameras.First();
-        if (playing)
-        {
-            var result = await cameraView.StopCameraAsync();
-            if (result == CameraResult.Success)
-                controlButton.Text = "Play";
-        }
-        else
-        {
-            var result = await cameraView.StartCameraAsync();
-            if (result == CameraResult.Success)
-                controlButton.Text = "Stop";
-        }
-        playing = !playing;
+        await cameraView.StopCameraAsync();
+        await App.Current.MainPage.Navigation.PopModalAsync();
     }
 }
