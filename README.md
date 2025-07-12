@@ -1,4 +1,4 @@
-![Open Repair Manager Logo](https://i.ibb.co/99Qyb1sc/image.png)
+![Open Repair Manager Logo](https://raw.githubusercontent.com/Open-Repair-Manager/OpenRepairManager.MAUI/954969a61225b32208da8ba45a8d0f5a34963259/OpenRepairManager.MAUI/Resources/Splash/ormlogoext.png)
 
 # Open Repair Manager | MAUI
 ## Companion Mobile App for ORM
