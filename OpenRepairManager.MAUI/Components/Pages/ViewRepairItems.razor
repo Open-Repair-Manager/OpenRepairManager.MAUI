@@ -14,7 +14,7 @@
 
             <a style="@isDesktop" href="/ReturningItem" class="btn btn-primary"><i class="bi bi-qr-code-scan"></i>Scan Item</a>
             <a style="@isMobile" @onclick="() => App.Current.MainPage.Navigation.PushModalAsync(new BarcodeScanner())" class="btn btn-primary"><i class="bi bi-qr-code-scan"></i>Scan Item</a>
-            
+            <p>Last Refresh: @count.ToShortTimeString()</p>
             <div class="table-responsive">
                 <table class="table table-striped mb-0" id="locTable">
                     <thead>
@@ -94,9 +94,12 @@
     private string isDesktop = "display: none";
     private string isMobile = "display: none";
     private List<RepairItem> _repairItems = new();
+    private DateTime count = DateTime.Now;
+    private static System.Timers.Timer _timer;
+    private int _counter = 60;
     
     public string categorySlug { get; set; }
-    
+
     public string sessionSlug { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -122,8 +125,30 @@
         var repairItems = await ApiService.GetStatsAsync(sessionSlug, categorySlug);
         
         _repairItems = repairItems.ToList();
+        _timer = new System.Timers.Timer(30000);
+        _timer.Elapsed += CountDownTimer;
+        _timer.Enabled = true;
     }
-
+    
+    public async void CountDownTimer(Object source, System.Timers.ElapsedEventArgs e)
+    {
+        await InvokeAsync(async () =>
+        {
+            StateHasChanged();
+            var repairItems = await ApiService.GetStatsAsync(sessionSlug, categorySlug);
+        
+            _repairItems = repairItems.ToList();
+            _timer.Enabled = false;
+            _timer.Dispose();
+            count = DateTime.Now;
+            _timer = new System.Timers.Timer(60000);
+            _timer.Elapsed += CountDownTimer;
+            _timer.Enabled = true;
+        });
+        
+        
+    }
+    
     private async Task ScanAsync()
     {
         await App.Current.MainPage.Navigation.PushModalAsync(new BarcodeScanner());
